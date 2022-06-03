@@ -5,7 +5,7 @@ var questionContainer = document.querySelector('#question-container')
 var questionEl = document.querySelector("#question")
 var answerButton = document.querySelector("#answer-buttons")
 var questionCounter = 0
-
+var playerScore = 0
 
 // Loads question from the question array
 function loadQuestion(question) { 
@@ -55,12 +55,23 @@ var skipQuestion = function() {
 var checkAnswer = function() {
     var checkAnswer = event.target.getAttribute("data-correct")
     if (checkAnswer == "true") {
-        console.log("right answer")
-    } else {
-        console.log("wrong answer")
+        playerScore ++
+        console.log("right answer " + playerScore)
+        questionCounter ++
+        } 
+     if (checkAnswer == "false") {
+        console.log("wrong answer") 
+        questionCounter ++     
+        }    
+    while (answerButton.firstChild) {
+        answerButton.removeChild(answerButton.firstChild)  
     }
-}
+    loadQuestion(questions[questionCounter])  
+    }
+   
+
 var startGame = function() {
+    var playerScore = 0
     startButton.classList.add("hide")
     questionContainer.classList.remove("hide")
     skipButton.classList.remove("hide")
