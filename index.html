@@ -8,15 +8,27 @@
 
     <title>JavaScript Quiz App</title>
 </head>
+
 <body>
-    <div class="container">
-        <div id="question-container" class="hide">
+        <div id = "banner" class="hide">        
+        <div id="timer-display">Time:</div>            
+        </div>   
+        <div class="container">        
+        <div id="question-container" >
             <div id="question"></div>
             <div id="answer-buttons" class="btn-grid"></div>
         </div> 
         <div class="gameControl">
             <button id="skip-btn" class="skip-btn btn hide">Skip</button>
-            <button id="start-btn" class="start-btn btn">Start</button>              
+            <button id="start-btn" class="start-btn btn ">Start</button>              
+        </div>
+        <div class="scoreBoard hide"> 
+            <div id="highScores">
+                <ul id="highScoreList">
+                        <li>Highscores </li>
+                </ul>
+            
+            </div>
         </div>
     </div>
 <script src="./assets/js/script.js"></script>

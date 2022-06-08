@@ -1,11 +1,16 @@
-window.alert("Welcome to the JavaScript Quiz App! \n \nYour final score is determined by the number of questions answered correctly within the time limit. A skipped question will incur a penalty that reduces your remaining time.  Click START to begin.")
+window.alert("Welcome to the JavaScript Quiz App! \n \nThe Quiz consists of 20 questions. Your final score is determined by the number of questions answered correctly within the 100 second time limit. A missed answer or skipped question will incur a penalty that reduces your remaining time by 5 seconds.  Click the START button to begin.")
+
 var skipButton = document.querySelector('#skip-btn')
 var startButton = document.querySelector('#start-btn')
 var questionContainer = document.querySelector('#question-container')
+var banner = document.querySelector("#banner")
+var scoreBoard = document.querySelector('.scoreBoard')
 var questionEl = document.querySelector("#question")
 var answerButton = document.querySelector("#answer-buttons")
+var timerDisplay = document.querySelector("#timer-display")
 var questionCounter = 0
 var playerScore = 0
+var timePenalty = 0
 
 // Loads question from the question array
 function loadQuestion(question) { 
@@ -16,33 +21,34 @@ function loadQuestion(question) {
     //gets question from questions array
     questionEl.innerText = question.question
 
-    // keeps track of which item in the answers array we are iterating through
-    var arrayCount = 0
+    // keeps track of which item in the answers Array we are iterating through
+    var answerArrayCount = 0
 
-    //creates a button for each answer in the answers array with class of btn
+    //creates a button for each answer in the answers Array 
     question.answers.forEach(function(answer){
         var button = document.createElement("button")
         button.innerText = answer.text
         button.classList.add('btn')       
-    // copy data attribute from answers array to each button 
-       button.dataset.correct = (question.answers[arrayCount].correct)
+
+    // copy data attribute from Answers array to each button 
+       button.dataset.correct = (question.answers[answerArrayCount].correct)
        
     // appends answer button to HTML          
     answerButton.appendChild(button)
 
     //Increments the answers array count
-    arrayCount ++
+    answerArrayCount ++
     })
   } else {
-    console.log("game over bucko!")
-    // this will go to endGame function
+    endGame()    
  }
 }
 
 
-// if skip is pressed increments question counter by 1. Deletes the answer buttons and loads the next set
+// if skip is pressed increments question counter by 1. Removes previos question and replaces it with a new one
 var skipQuestion = function() {
     console.log("skip button was clicked")
+    timePenalty += 5
     questionCounter ++
     while (answerButton.firstChild) {
         answerButton.removeChild(answerButton.firstChild)
@@ -50,7 +56,7 @@ var skipQuestion = function() {
     loadQuestion(questions[questionCounter])
 
 }
-// if an answer button is clicked checks to see if the button has the true data characteristic set 
+// if an answer button is clicked checks to see if the button has the data characteristic of "true" indicating a correct answer
 
 var checkAnswer = function() {
     var checkAnswer = event.target.getAttribute("data-correct")
@@ -60,6 +66,7 @@ var checkAnswer = function() {
         questionCounter ++
         } 
      if (checkAnswer == "false") {
+         timePenalty += 5
         console.log("wrong answer") 
         questionCounter ++     
         }    
@@ -68,15 +75,60 @@ var checkAnswer = function() {
     }
     loadQuestion(questions[questionCounter])  
     }
-   
+    var gameTimer 
 
 var startGame = function() {
+    gameTimer = setInterval(timeIt, 1000)
     var playerScore = 0
     startButton.classList.add("hide")
     questionContainer.classList.remove("hide")
+    banner.classList.remove("hide")
     skipButton.classList.remove("hide")
+    loadQuestion(questions[questionCounter])
 
 }
+
+var endGame = function() {
+    clearInterval(gameTimer)
+    skipButton.classList.add("hide")
+    questionContainer.classList.add("hide")
+    banner.classList.add("hide")
+    scoreBoard.classList.remove("hide")
+    var highScore = function () {
+        console.log("player's score is " + playerScore)
+    }
+    highScore()
+
+}
+
+// Timer starts here. A countdown from 100 to 0 marks the time in the game. A missed or skipped question will add 5 seconds to a penaltyTimer variable. 
+// The end of game is determined by when the countdown timer reaches the value of the penaltyTimer.
+
+var timeRemaining = 100
+var timeCounter = 0
+var countdown 
+
+
+function timeIt() {     
+    
+    if (countdown <= timePenalty) {
+        console.log("game stopped")
+        endGame()
+        
+    } else {    
+   timeCounter++ 
+   countdown = (timeRemaining - timeCounter)
+   console.log("Countdown is " + countdown)
+   console.log("total time penalty is " + timePenalty)
+   var playerTime = countdown - timePenalty
+   timerDisplay.innerText = "Time: " + playerTime
+   return countdown  
+   
+    }
+}
+
+
+
 
 
 // Event listeners
@@ -131,9 +183,9 @@ var questions = [
     {
         question: "Which array method sorts the elements of an array?",
         answers: [
-            {text: "sort()", correct: true},
-            {text: "changeOrder(order)", correct: false},
+            {text: "sort()", correct: true},          
             {text: "order()", correct: false},
+            {text: "changeOrder(order)", correct: false},
             {text: "None of the above ", correct: false}
         
         ]
@@ -141,10 +193,10 @@ var questions = [
     {
         question: "How do you round the number 5.35 to the nearest integer?",
         answers: [
+            {text: "Math.round(5.35)", correct: true},
             {text: "rnd(5.35)", correct: false},
             {text: "Math.rnd(5.35)", correct: false},
-            {text: "round(5.35)", correct: false},
-            {text: "Math.round(5.35)", correct: true}
+            {text: "round(5.35)", correct: false}            
         
         ]
     },
@@ -181,10 +233,11 @@ var questions = [
     {
         question: "What is a closure?",
         answers: [
-            {text: "Scope where the variables of functions are resolved", correct: false},
-            {text: "Function objects", correct: false},
-            {text: "It is both scope where the variables of functions are resolved and function objects", correct: true},
-            {text: "qone of the above options", correct: false}
+            {text: "a function that references variables in the outer scope from its inner scope.", correct: true},
+            {text: "a variable is bound to the most recent value assigned to that variable", correct: false},
+            {text: "Function objects", correct: false},        
+            {text: "none of the above options", correct: false}
+            
         
         ]
     },
@@ -201,8 +254,8 @@ var questions = [
     {
         question: "JavaScript is not a case-sensitive language.",
         answers: [
-            {text: "True", correct: true},
-            {text: "False", correct: false},        
+            {text: "True", correct: false},
+            {text: "False", correct: true},        
         
         ]
     },
@@ -227,7 +280,7 @@ var questions = [
         ]
     },
     {
-        question: "Which of the following function of Array object extracts a section of an array and returns a new array?",
+        question: "Which of the following Array functions extracts a section of an existing Array and returns a new Array?",
         answers: [
             {text: "reverse()", correct: false},
             {text: "shift()", correct: false},
@@ -247,17 +300,7 @@ var questions = [
         ]
     },
     {
-        question: "IsNaN() Evaluates And Argument To Determine if Given Value?",
-        answers: [
-            {text: "Is Not a Null", correct: false},
-            {text: "Is Not a Number", correct: true},
-            {text: "Is Not a New Object", correct: false},
-            {text: "None Of The Above", correct: false}
-        
-        ]
-    },
-    {
-        question: "Function is Used To Parse a String To Int",
+        question: "Function esed To Parse a String To Int",
         answers: [
             {text: "Integer.Parse", correct: false},
             {text: "Int.Parse", correct: false},
@@ -267,7 +310,7 @@ var questions = [
         ]
     },
     {
-        question: "Which Of The Dialog Boxes Displays a Message And a Data Entry Field?",
+        question: "Which Of the following dialog boxes displays a message And a data entry field?",
         answers: [
             {text: "Alert()", correct: false},
             {text: "Prompt()", correct: true},
@@ -289,23 +332,14 @@ var questions = [
     {
         question: "What is the value of the following express: 8 % 3?",
         answers: [
-            {text: "5", correct: false},
-            {text: "24", correct: false},
-            {text: "3", correct: false},
-            {text: "2", correct: true}
+            {text: " 5 ", correct: false},
+            {text: " 24 ", correct: false},
+            {text: " 3 ", correct: false},
+            {text: " 2 ", correct: true}
         
         ]
     },
-    {
-        question: "How do you use JavaScript via an external file ?",
-        answers: [
-            {text: "< script url = 'filename.js' > < / script >", correct: false},
-            {text: "< script rel = 'filename.js' > < / script >", correct: false},
-            {text: "< script href = 'filename.js' > < / script >", correct: false},
-            {text: "< script src = 'filename.js' > < / script >", correct: true}
-        
-        ]
-    }
+   
 ]
     
-    loadQuestion(questions[questionCounter])
+    

@@ -7,13 +7,14 @@ body {
     padding: 0;
     margin: 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100vw;
     height: 100vh;
     }
   
-/* style the card*/
+/* style the cards */
 
 .container {
     width: 800px;
@@ -23,6 +24,18 @@ body {
     border-radius: 5px;
     color: white;
     box-shadow: 0 0 10px 3px;
+    margin: 3px;
+    }
+
+#banner {
+    width: 800px;
+    max-width: 80%;
+    background-color: rgb(5, 5, 151);
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    box-shadow: 0 0 10px 3px;
+    margin: 3px;
     }
 
 /* establish grid for btns */
@@ -39,6 +52,7 @@ body {
     border-radius: 5px;
     padding: 5px 10px;
     color:black;
+    width: 100%;
 }
 
 .btn:hover {
