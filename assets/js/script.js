@@ -2,18 +2,34 @@ window.alert("Welcome to the JavaScript Quiz App! \n \nThe Quiz consists of 20 q
 
 var skipButton = document.querySelector('#skip-btn')
 var startButton = document.querySelector('#start-btn')
+var restartButton = document.querySelector("#restart-btn")
 var questionContainer = document.querySelector('#question-container')
 var banner = document.querySelector("#banner")
 var scoreBoard = document.querySelector('.scoreBoard')
 var questionEl = document.querySelector("#question")
 var answerButton = document.querySelector("#answer-buttons")
 var timerDisplay = document.querySelector("#timer-display")
-var questionCounter = 0
+var scoreDisplay = document.querySelector("#score-display")
+var highScoreList = document.querySelector("#highScoreList")
 var playerScore = 0
+var questionCounter = 0
 var timePenalty = 0
+var highScores = []
+var playerInitials
+var gameTimer
+var timeRemaining = 100
+var timeCounter = 0
+ 
+
+
+
+
 
 // Loads question from the question array
 function loadQuestion(question) { 
+   
+    
+
 
     // ensures there are questions remaining or sends to endGame if none
     if(questionCounter < questions.length) {
@@ -39,15 +55,15 @@ function loadQuestion(question) {
     //Increments the answers array count
     answerArrayCount ++
     })
+    
   } else {
     endGame()    
  }
 }
 
 
-// if skip is pressed increments question counter by 1. Removes previos question and replaces it with a new one
+// if skip is pressed increments question counter by 1. Removes previous question and replaces it with a new one
 var skipQuestion = function() {
-    console.log("skip button was clicked")
     timePenalty += 5
     questionCounter ++
     while (answerButton.firstChild) {
@@ -62,83 +78,142 @@ var checkAnswer = function() {
     var checkAnswer = event.target.getAttribute("data-correct")
     if (checkAnswer == "true") {
         playerScore ++
-        console.log("right answer " + playerScore)
         questionCounter ++
         } 
+
      if (checkAnswer == "false") {
-         timePenalty += 5
-        console.log("wrong answer") 
-        questionCounter ++     
+         timePenalty += 5        
+        questionCounter ++ 
+          
         }    
     while (answerButton.firstChild) {
         answerButton.removeChild(answerButton.firstChild)  
     }
     loadQuestion(questions[questionCounter])  
     }
-    var gameTimer 
+   
 
-var startGame = function() {
-    gameTimer = setInterval(timeIt, 1000)
-    var playerScore = 0
+var startGame = function() {    
+    playerScore = 0
+    scoreBoard.classList.add("hide")
+    gameTimer = setInterval(timeIt, 1000)     
     startButton.classList.add("hide")
     questionContainer.classList.remove("hide")
     banner.classList.remove("hide")
     skipButton.classList.remove("hide")
     loadQuestion(questions[questionCounter])
+    
+    }
 
-}
 
-var endGame = function() {
-    clearInterval(gameTimer)
+
+
+var endGame = function() {  
+    timeRemaining = 100
+    timePenalty = 0  
+    clearInterval(gameTimer)    
+    timerDisplay.innerText = "Timer: 0"
     skipButton.classList.add("hide")
     questionContainer.classList.add("hide")
     banner.classList.add("hide")
     scoreBoard.classList.remove("hide")
-    var highScore = function () {
-        console.log("player's score is " + playerScore)
-    }
-    highScore()
-
+    restartButton.classList.remove("hide")
+    questionCounter = 0
+    loadScore()
+  
 }
+var loadScore = function() {
 
-// Timer starts here. A countdown from 100 to 0 marks the time in the game. A missed or skipped question will add 5 seconds to a penaltyTimer variable. 
-// The end of game is determined by when the countdown timer reaches the value of the penaltyTimer.
-
-var timeRemaining = 100
-var timeCounter = 0
-var countdown 
-
-
-function timeIt() {     
+    // retrieve saved scores from localStorage
+    savedScores = JSON.parse(localStorage.getItem("highScores"));
     
-    if (countdown <= timePenalty) {
-        console.log("game stopped")
-        endGame()
+   // if localStorage is empty creates an empty array to hold the player's score
+    if (!savedScores) {
+        savedScores = []
+           }
+  
+    
         
-    } else {    
+
+    playerInitials = window.prompt("Please Enter Your Intials")
+
+   // creates new object to store player and score
+    var finalScore = { player: playerInitials, score: playerScore}
+    
+    //adds player score object to the array
+    savedScores.push(finalScore)    
+
+    // sorts the array based on score
+
+   savedScores.sort((a,b) => {
+    return b.score - a.score;
+   })
+   
+
+
+   // trims the array so that only the top 5 scores are saved
+
+  var scoreSlice = savedScores.slice(0,5)
+  console.log(scoreSlice)
+
+  for (i = 0; i < scoreSlice.length; i++) {  
+  var highScoreEl = document.createElement("li")
+  highScoreEl.innerText = scoreSlice[i].player + "  " + scoreSlice[i].score
+  highScoreEl.classList.add('score-list-item') 
+// appends answer button to HTML          
+
+highScoreList.appendChild(highScoreEl)
+
+  }
+  
+
+  
+ 
+   
+
+
+
+      
+// save new highscore array to localStorage
+    localStorage.setItem("highScores", JSON.stringify(scoreSlice));      
+}
+function timeIt() {     
+    var countdown 
+    
+
+    if (countdown <= timePenalty) { 
+     endGame()
+        
+        
+    } else {  
    timeCounter++ 
-   countdown = (timeRemaining - timeCounter)
-   console.log("Countdown is " + countdown)
-   console.log("total time penalty is " + timePenalty)
+   countdown = (timeRemaining - timeCounter) 
    var playerTime = countdown - timePenalty
    timerDisplay.innerText = "Time: " + playerTime
-   return countdown  
-   
-    }
+   scoreDisplay.innerText = "Score: " + playerScore  
+    
+    };
 }
 
 
-
+var restartGame = function() {
+    location.reload(true);
+}
 
 
 // Event listeners
 answerButton.addEventListener('click', checkAnswer)
 skipButton.addEventListener('click', skipQuestion)
 startButton.addEventListener('click', startGame)
+restartButton.addEventListener('click', restartGame)
 
 
 
-//questions 
+ 
+    
+
+
+// Questions. The correct answer has a custom data item of correct set to "true"
 var questions = [
     {
         question: "Inside which element do you place JavaScript?",
@@ -221,7 +296,7 @@ var questions = [
         ]
     },
     {
-        question: "let arr = [1,2,3,4,5]; /n arr.slice(0,3);",
+        question: "let arr = [1,2,3,4,5];   \n\n arr.slice(0,3)",
         answers: [
             {text: "Returns [4,5]", correct: false},
             {text: "Returns [1,2,3,4]", correct: true},
@@ -300,7 +375,7 @@ var questions = [
         ]
     },
     {
-        question: "Function esed To Parse a String To Int",
+        question: "Function used To Parse a String To Int",
         answers: [
             {text: "Integer.Parse", correct: false},
             {text: "Int.Parse", correct: false},
@@ -320,7 +395,7 @@ var questions = [
         ]
     },
     {
-        question: "Given the following, what is the value of x? /n var x = typeof'abc';",
+        question: "Given the following, what is the value of x? \n var x = typeof'abc';",
         answers: [
             {text: "String", correct: true},
             {text: "ABC", correct: false},
