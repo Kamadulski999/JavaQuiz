@@ -319,7 +319,7 @@ var questions = [
     {
         question: "What kind of scope does JavaScript use?",
         answers: [
-            {text: "Literal scoping", correct: true},
+            {text: "Lexical scoping", correct: true},
             {text: "Dynamic scoping", correct: false},
             {text: "Generic scoping", correct: false},
             {text: "Static scoping", correct: false}
