@@ -179,8 +179,7 @@ highScoreList.appendChild(highScoreEl)
 }
 function timeIt() {     
     var countdown 
-    
-
+  
     if (countdown <= timePenalty) { 
      endGame()
         
@@ -191,9 +190,14 @@ function timeIt() {
    var playerTime = countdown - timePenalty
    timerDisplay.innerText = "Time: " + playerTime
    scoreDisplay.innerText = "Score: " + playerScore  
+   console.log(playerTime)
+   if(playerTime < 0) {
+    endGame()
+}
+   }
     
     };
-}
+
 
 
 var restartGame = function() {

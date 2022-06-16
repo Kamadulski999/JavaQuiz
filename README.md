@@ -12,8 +12,8 @@ https://kamadulski999.github.io/JavaQuiz/
 
 
 Questions for this game were derived from other introductory JavaScript quiz apps found on the web. Much thanks to; 
-https://www.w3docs.com/quiz/javascript-basic
-https://www.tutorialspoint.com/javascript/javascript_online_quiz.html
+https://www.w3docs.com/quiz/javascript-basic <br>
+https://www.tutorialspoint.com/javascript/javascript_online_quiz.html <br>
 https://www.proprofs.com/quiz-school/playquiz/?title=do-u-know-java-script
 
 
